@@ -18,12 +18,16 @@ const app = express();
 // Establish MongoDB connection as soon as the server starts
 const db = require('./db');
 
+require('dotenv').config();
+
 // ─────────────────────────────────────────
 // Middleware
 // express.json() parses incoming requests with JSON payloads
 // Without this, req.body would be undefined when we POST data via Postman
 // ─────────────────────────────────────────
 app.use(express.json());
+//where db hosted it gives you a port number if not then this local port will be run that's why we write this 
+const PORT = process.env.PORT || 3000;
 
 // ─────────────────────────────────────────
 // Routes
@@ -51,6 +55,6 @@ app.get('/', (req, res) => {
 // ─────────────────────────────────────────
 // Start Server
 // ─────────────────────────────────────────
-app.listen(3000, () => {
+app.listen(PORT, () => {
     console.log('🚀 Server is listening on port 3000');
 });

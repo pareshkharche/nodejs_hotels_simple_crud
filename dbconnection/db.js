@@ -10,13 +10,16 @@
  */
 
 const mongoose = require('mongoose');
-
+const path = require('path');
+ 
+require('dotenv').config({ path: path.resolve(__dirname, "../.env") });
 // ─────────────────────────────────────────
 // MongoDB Connection URL
 // Format: mongodb://host:port/databaseName
 // Port 27017 is the default MongoDB port
 // ─────────────────────────────────────────
-const mongoURL = 'mongodb://localhost:27017/hotels';
+const mongoURL = process.env.MONGODB_URL_LOCAL;  //local db connection
+// mongoURL = process.env.MONGODB_URL; //mongoatlas db connection url
 
 // ─────────────────────────────────────────
 // NOTE: Older Mongoose versions needed extra options like:

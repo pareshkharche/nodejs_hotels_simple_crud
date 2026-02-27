@@ -27,7 +27,7 @@ const menuItemSchema = new mongoose.Schema({
 
     taste: {
         type: String,
-        enum: ['Sweet', 'Spicy', 'Sour'],   // only these taste values are allowed
+        enum: ['Sweet', 'Spicy', 'Sour', 'Bitter'],   // only these taste values are allowed
         required: true
     },
 

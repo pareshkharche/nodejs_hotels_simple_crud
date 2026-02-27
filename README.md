@@ -10,8 +10,8 @@ A REST API for a hotel management system. Supports full **CRUD** (Create, Read, 
 Day5Github/
 ├── DatabaseConnections/
 │   ├── db.js           → MongoDB connection setup using Mongoose
-│   ├── server.js       → Express app, middleware, and route mounting
-│   └── serverOld.js    → Archive: earlier version (kept for reference)
+│   └── server.js       → Express app, middleware, and route mounting
+│   
 │
 ├── models/
 │   ├── Person.js       → Mongoose schema/model for hotel staff

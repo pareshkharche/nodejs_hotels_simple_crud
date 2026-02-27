@@ -11,7 +11,11 @@ Day5Github/
 ├── DatabaseConnections/
 │   ├── db.js           → MongoDB connection setup using Mongoose
 │   └── server.js       → Express app, middleware, and route mounting
+<<<<<<< Updated upstream
 │   
+=======
+│ 
+>>>>>>> Stashed changes
 │
 ├── models/
 │   ├── Person.js       → Mongoose schema/model for hotel staff

@@ -1,81 +1,113 @@
-# Day 5 - CRUD Operations with Node.js, Express, MongoDB & Mongoose
+# 📌 Day 5 – Hotel Management API (Node.js, Express, MongoDB & Mongoose)
 
-A REST API for a hotel management system. Supports full **CRUD** (Create, Read, Update, Delete) for hotel staff and menu items. All endpoints were tested using **Postman**, and data was viewed using **MongoDB Compass**.
+A simple REST API for a hotel management system that supports full **CRUD** (Create, Read, Update, Delete) for:
+
+✔ Hotel Staff (Person) &nbsp; ✔ Menu Items (MenuItem)
+
+APIs were tested using **Postman**, and database data can be inspected using **MongoDB Compass** (local) or **MongoDB Atlas** (cloud).
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 Day5Github/
-├── DatabaseConnections/
-│   ├── db.js           → MongoDB connection setup using Mongoose
-│   └── server.js       → Express app, middleware, and route mounting
-<<<<<<< Updated upstream
-│   
-=======
-│ 
->>>>>>> Stashed changes
+│
+├── dbconnection/
+│   ├── db.js               → MongoDB connection setup using Mongoose
+│   └── server.js           → Express app, middleware, and route mounting
 │
 ├── models/
-│   ├── Person.js       → Mongoose schema/model for hotel staff
-│   └── MenuItem.js     → Mongoose schema/model for menu items
+│   ├── Person.js           → Schema/model for hotel staff
+│   └── MenuItem.js         → Schema/model for menu items
 │
 └── routes/
     ├── personRoutes.js     → CRUD routes for /person
     └── menuItemRoutes.js   → CRUD routes for /menu
+
+.env                        ← Environment variables (DB connection strings)
+.gitignore
+package.json
 ```
 
 ---
 
-## Tech Stack
+## 🚀 Features
 
-| Tool | Purpose |
-|------|---------|
-| Node.js | JavaScript runtime |
-| Express.js | Web framework for building the API |
-| MongoDB | NoSQL database to store data |
-| Mongoose | ODM library — connects Node.js to MongoDB with schemas |
-| Postman | API testing tool (sending GET, POST, PUT, DELETE requests) |
-| MongoDB Compass | GUI to visually browse MongoDB collections |
+- Connection to local MongoDB or MongoDB Atlas using environment variables
+- Express routing with modular route files
+- Full CRUD (POST, GET, PUT, DELETE)
+- Query filters for specific fields
+- Async/await for clean asynchronous code
 
 ---
 
-## Setup & Run
+## 🛠️ Setup & Installation
 
-**1. Install dependencies**
+### 1. Install Dependencies
+
 ```bash
-npm install express mongoose
+npm install
 ```
 
-**2. Make sure MongoDB is running locally**
-```bash
-# MongoDB default runs on port 27017
-# Start it via MongoDB Compass or run: mongod
-```
-
-**3. Start the server**
-```bash
-node DatabaseConnections/server.js
-```
-
-Server runs at: `http://localhost:3000`
+This installs required packages: Express, Mongoose, Dotenv, etc.
 
 ---
 
-## API Endpoints
+### 2. Configure `.env` File ⚠️ Important
 
-### Person (Hotel Staff)
+Create a file named `.env` in the **project root** (same folder as `package.json`) and add one of the following depending on your setup:
+
+#### 🟡 Local MongoDB
+
+```env
+MONGODB_URL_LOCAL=mongodb://<your_host>:<your_port>/hotels
+```
+
+> Replace `hotels` with your database name if needed.
+
+#### 🟢 MongoDB Atlas (Cloud)
+
+1. Create a free cluster at [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
+2. Whitelist your IP and create a database user
+3. Copy your connection string and paste it below:
+
+```env
+MONGODB_URL_ATLAS=mongodb+srv://<username>:<password>@cluster0.mongodb.net/myDatabase?retryWrites=true&w=majority
+```
+
+> Replace `<username>`, `<password>`, and `myDatabase` with your actual credentials.
+
+---
+
+### 3. Run the Server
+
+```bash
+node dbconnection/server.js
+```
+
+The API will be available at:
+
+```
+http://localhost:3000
+```
+
+---
+
+## 🧪 API Endpoints
+
+### 📍 Person (Hotel Staff)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/person` | Add a new staff member |
-| GET | `/person` | Get all staff members |
-| GET | `/person/:workType` | Filter by role: `chef`, `waiter`, or `manager` |
-| PUT | `/person/:id` | Update a staff member by MongoDB ID |
-| DELETE | `/person/:id` | Delete a staff member by MongoDB ID |
+| GET | `/person` | Get all staff |
+| GET | `/person/:workType` | Filter by role: `chef`, `waiter`, `manager` |
+| PUT | `/person/:id` | Update staff by ID |
+| DELETE | `/person/:id` | Remove staff by ID |
 
-**Sample POST /person body:**
+**Example — POST `/person`**
+
 ```json
 {
   "name": "Amit Shah",
@@ -90,17 +122,18 @@ Server runs at: `http://localhost:3000`
 
 ---
 
-### Menu Items
+### 📍 Menu Items
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/menu` | Add a new menu item |
 | GET | `/menu` | Get all menu items |
-| GET | `/menu/:taste` | Filter by taste: `sweet`, `spicy`, or `sour` |
-| PUT | `/menu/:id` | Update a menu item by MongoDB ID |
-| DELETE | `/menu/:id` | Delete a menu item by MongoDB ID |
+| GET | `/menu/:taste` | Filter by taste: `Sweet`, `Spicy`, `Sour` |
+| PUT | `/menu/:id` | Update a menu item by ID |
+| DELETE | `/menu/:id` | Remove a menu item by ID |
 
-**Sample POST /menu body:**
+**Example — POST `/menu`**
+
 ```json
 {
   "name": "Paneer Tikka",
@@ -114,11 +147,17 @@ Server runs at: `http://localhost:3000`
 
 ---
 
-## Key Concepts Learned
+## 🧠 Concepts Covered
 
-- Setting up a MongoDB connection with Mongoose
-- Defining schemas with data types, required fields, enums, and defaults
-- Creating Express Router to separate routes by feature
-- Full CRUD using Mongoose methods: `.save()`, `.find()`, `.findByIdAndUpdate()`, `.findByIdAndDelete()`
-- Using `async/await` instead of callbacks for cleaner code
-- Testing APIs with Postman
+- Connecting Node.js with MongoDB using `dotenv` and Mongoose
+- Schema definitions with required fields, enums, and defaults
+- Organizing routes using `express.Router()`
+- Handling async database operations using `async/await`
+- Filtering queries based on URL parameters
+
+---
+
+## 📝 Notes
+
+- Make sure `.env` is listed in `.gitignore` so your credentials are **never pushed to GitHub**
+- To switch between local and Atlas DB, just update the connection variable used in `db.js`

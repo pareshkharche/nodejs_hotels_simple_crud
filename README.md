@@ -1,4 +1,4 @@
-# 📌 Day 5 – Hotel Management API (Node.js, Express, MongoDB & Mongoose)
+# 📌 Hotel Management API (Node.js, Express, MongoDB & Mongoose)
 
 A simple REST API for a hotel management system that supports full **CRUD** (Create, Read, Update, Delete) for:
 

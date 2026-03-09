@@ -1,20 +1,5 @@
-/**
- * Person.js
- * Purpose: Mongoose schema and model for a hotel staff member
- *
- * A "schema" defines the structure/shape of a document in MongoDB.
- * A "model" is a class built from the schema — we use it to create,
- * read, update, and delete (CRUD) documents in the "people" collection.
- *
- * This model is used in: routes/personRoutes.js
- */
-
 const mongoose = require('mongoose');
 
-// ─────────────────────────────────────────
-// Person Schema
-// Defines what fields a person document has and their rules
-// ─────────────────────────────────────────
 const personSchema = new mongoose.Schema({
 
     name: {
@@ -50,14 +35,45 @@ const personSchema = new mongoose.Schema({
     salary: {
         type: Number,
         required: true
+    },
+
+   
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
     }
 
 });
 
-// ─────────────────────────────────────────
-// Create Model from Schema
-// 'Person' → Mongoose will look for/create a collection called 'people' in MongoDB
-// ─────────────────────────────────────────
-const Person = mongoose.model('Person', personSchema);
 
+personSchema.pre('save', async function() {
+    const person = this;
+    if(!person.isModified('password')) return;
+    try {
+        const salt = await bcrypt.genSalt(10);
+
+        const hashedPassword = await bcrypt.hash(person.password,salt);
+        
+        person.password = hashedPassword;  
+    } catch (err) {
+        return next(err);
+    }
+});
+
+
+personSchema.methods.comparePassword = async function(candidatePassword){
+    try {
+        const isMatch = await bcrypt.compare(candidatePassword, this.password);
+        return isMatch;
+    } catch (err) {
+        throw err;
+    }
+};
+
+const Person = mongoose.model('Person', personSchema);
 module.exports = Person;

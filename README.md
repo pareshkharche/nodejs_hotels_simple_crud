@@ -26,7 +26,7 @@ nodejs_hotels_simple_crud/
 │   ├── personRoutes.js     → CRUD routes for /person (protected)
 │   └── menuItemRoutes.js   → CRUD routes for /menu (public)
 │
-├── .env                    ← Environment variables (never push this!)
+├── .env                    ← Environment variables 
 ├── .gitignore
 └── package.json
 ```

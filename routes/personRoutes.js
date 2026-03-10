@@ -1,49 +1,79 @@
-/**
- * personRoutes.js
- * Purpose: All API routes related to hotel staff (Person)
- *
- * Why a separate routes file?
- * If we put every route in server.js, it becomes huge and unmanageable.
- * Splitting routes by feature (person, menu) keeps code clean and organized.
- * This pattern is called Separation of Concerns.
- *
- * Base URL: /person  (mounted in server.js)
- *
- * Available endpoints (test all using Postman):
- *  POST   /person              → Add a new person
- *  GET    /person              → Get all persons
- *  GET    /person/:workType    → Get persons filtered by work (chef/waiter/manager)
- *  PUT    /person/:id          → Update a person by MongoDB ID
- *  DELETE /person/:id          → Delete a person by MongoDB ID
- */
-
 const express = require('express');
 const router = express.Router();
 const Person = require('./../models/Person');
 
-// ─────────────────────────────────────────
-// POST /person
-// Add a new staff member to the database
-// Send JSON body in Postman with: name, age, work, mobile, email, address, salary
-// ─────────────────────────────────────────
-router.post('/', async (req, res) => {
+const {jwtAuthMiddleware, generateToken} = require('./../config/jwt');
+
+router.post('/signup', async (req, res) => {
     try {
         const data = req.body;                  // get data from request body
         const newPerson = new Person(data);     // create a new Person document
         const response = await newPerson.save(); // save to MongoDB
         console.log('✅ Person saved:', response.name);
-        res.status(200).json(response);
+
+        const payload = {
+            id: response.id,
+            username: response.username
+        }
+        console.log(JSON.stringify(payload));
+        const token = generateToken(payload);
+        console.log("Token is: ", token);
+
+        res.status(200).json({response: response, token: token});
     } catch (err) {
         console.log('❌ Error saving person:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-// ─────────────────────────────────────────
-// GET /person
-// Fetch all staff members from the database
-// ─────────────────────────────────────────
-router.get('/', async (req, res) => {
+
+//Login Route
+router.post('/login', async(req, res) => {
+    try {
+        //Exttract username and password from req.body
+        const {username, password} = req.body;
+
+        //find the user by username
+        const user = await Person.findOne({username: username});
+
+        //if user doesnot exist or password doesnot match return error
+        if(!user || !(await user.comparePassword(password))){
+            return res.status(401).json({error: "Invalid username or password"});
+        }
+
+        //generate token
+        const payload={
+            id: user.id,
+            username: user.username
+        }
+        const token =generateToken(payload);
+
+        //return token as response
+        res.json({token})
+
+    } catch (err) {
+            console.error(err);
+            res.status(500).json({error: "Internal server error"});
+    }
+})
+
+//Profile route
+router.get('/profile', jwtAuthMiddleware,  async(req, res) => {
+    try {
+        const userData= req.user;
+        console.log("user data: ", userData);
+
+        const userId = userData.id;
+        const user = await Person.findById(userId);
+        res.status(200).json({user});
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({error: "Internal server error"});
+        
+    }
+})
+
+router.get('/', jwtAuthMiddleware,async (req, res) => {
     try {
         const data = await Person.find();       // .find() with no args = get all
         console.log('✅ All persons fetched');
@@ -54,12 +84,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// ─────────────────────────────────────────
-// GET /person/:workType
-// Fetch staff members filtered by their work type
-// Example: GET /person/chef  → returns all chefs
-// Valid values: chef, waiter, manager
-// ─────────────────────────────────────────
+
 router.get('/:workType', async (req, res) => {
     try {
         const workType = req.params.workType;   // extract value from URL
@@ -78,12 +103,6 @@ router.get('/:workType', async (req, res) => {
     }
 });
 
-// ─────────────────────────────────────────
-// PUT /person/:id
-// Update an existing person's data by their MongoDB _id
-// Example: PUT /person/64abc123...
-// Send updated fields as JSON body in Postman
-// ─────────────────────────────────────────
 router.put('/:id', async (req, res) => {
     try {
         const personId = req.params.id;             // MongoDB _id from URL
@@ -106,11 +125,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// ─────────────────────────────────────────
-// DELETE /person/:id
-// Delete a staff member by their MongoDB _id
-// Example: DELETE /person/64abc123...
-// ─────────────────────────────────────────
+
 router.delete('/:id', async (req, res) => {
     try {
         const personId = req.params.id;
